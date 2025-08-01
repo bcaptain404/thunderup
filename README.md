@@ -12,7 +12,7 @@ Use this when you want to skip package managers and manage Thunderbird updates m
 - Downloads the `.tar.bz2` or `.tar.xz` archive (whichever is available)
 - Extracts it to `/opt/thunderbird`
 - Skips reinstallation if already installed
-- Saves downloads to `/opt/downloads/` for reuse
+- Saves downloads to `/opt/downloads/` (relative to installation dir, not absolute)
 
 ---
 
@@ -33,6 +33,10 @@ chmod +x /path/to/thunderup.sh
 
 ```bash
 thunderup.sh [options] [version]
+
+# then you can launch thunderbird
+/opt/thunderbird/thunderbird &
+
 ```
 
 ### Options
@@ -53,6 +57,7 @@ thunderup.sh [options] [version]
 thunderup.sh           # Auto-detects latest version and installs if needed
 thunderup.sh 115.2.0  # Installs specific version if not already installed
 thunderup.sh --check-only  # Outputs latest version number and exits
+thunderup.sh 115.2.0 --check-only  # Outputs latest version number and exits
 ```
 
 ---
