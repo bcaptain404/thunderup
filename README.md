@@ -11,19 +11,18 @@ Use this when you want to skip package managers and manage Thunderbird updates m
 - Queries [thunderbird.net](https://www.thunderbird.net/) for the latest release (if version not provided)
 - Downloads the `.tar.bz2` or `.tar.xz` archive (whichever is available)
 - Extracts it to `/opt/thunderbird`
-- Skips reinstallation if a tag file for the version exists
+- Skips reinstallation if already installed
 - Saves downloads to `/opt/downloads/` for reuse
-- Supports command-line arguments in any order
 
 ---
 
 ## 🛠 Installation
 
-1. Copy `update-thunderbird.sh` anywhere in your `$PATH`, like `/usr/local/bin/`
+1. Copy `thunderup.sh` anywhere in your `$PATH`, like `/usr/local/bin/`
 2. Make it executable:
 
 ```bash
-chmod +x /path/to/update-thunderbird.sh
+chmod +x /path/to/thunderup.sh
 ```
 
 3. (Optional) Symlink or rename it to something like `thunderup`
@@ -33,7 +32,7 @@ chmod +x /path/to/update-thunderbird.sh
 ## 🔧 Usage
 
 ```bash
-update-thunderbird.sh [options] [version]
+thunderup.sh [options] [version]
 ```
 
 ### Options
@@ -51,16 +50,9 @@ update-thunderbird.sh [options] [version]
 ## 🔍 Examples
 
 ```bash
-update-thunderbird.sh           # Auto-detects latest version and installs if needed
-update-thunderbird.sh 115.2.0  # Installs specific version if not already installed
-update-thunderbird.sh --check-only  # Outputs latest version number and exits
-```
-
-Arguments can appear in any order:
-
-```bash
-update-thunderbird.sh --check-only 115.2.0
-update-thunderbird.sh 115.2.0 --check-only
+thunderup.sh           # Auto-detects latest version and installs if needed
+thunderup.sh 115.2.0  # Installs specific version if not already installed
+thunderup.sh --check-only  # Outputs latest version number and exits
 ```
 
 ---
@@ -80,7 +72,7 @@ These are typically available by default on most Linux distributions.
 - The script avoids reinstalling by creating a tag file like:\
   `/opt/downloads/thunderbird_installed.115.2.0`
 - To force reinstalling the same version, delete the tag file.
-- Logs for each run are saved to `/tmp/update_thunderbird.log`
+- Logs for each run are saved to `/tmp/thunderup.log`
 
 ---
 

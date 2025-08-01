@@ -185,7 +185,7 @@ function go() {
     for EXT in "${ALL_EXT[@]}" ; do
         echo "## Attempting download of $EXT file..." >&2
         UpdateProg "$1" "$EXT" "$NAME" "$PROG_DIR" "$PAGE_URL" "$FILE_URL"  && break
-    done 2>&1 | tee "/tmp/update_${NAME}.log"
+    done 2>&1 | tee "/tmp/thunderup.log"
 }
 
 go "${@}"
