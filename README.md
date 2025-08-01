@@ -1,45 +1,66 @@
 # thunderup
 
-A Bash script that auto-checks Thunderbird's official website for new releases, downloads the latest version if it's newer than the one you're running, and extracts it to `/opt/thunderbird`.
+A Bash script that auto-checks Thunderbird's official website for new releases, downloads the latest version if it's newer than the one you're running, extracts it to `/opt/thunderbird`, and optionally installs a specific version by tag.
 
-Use this when you want to skip package managers and manage Thunderbird updates more efficiently. Bonus points: add it to a launcher script to check for and apply updates at each launch of Thunderbird
+Use this when you want to skip package managers and manage Thunderbird updates more efficiently. Bonus: wrap it in a launcher to check for updates before every run.
 
 ---
 
 ## 📁 What It Does
 
-- If no version is specified as a commandline argument, it queries [thunderbird.net](https://www.thunderbird.net/) for the latest.
-- Downloads the archive for that version (if it hasn't been downloaded yet) into /opt/downloads
+- Queries [thunderbird.net](https://www.thunderbird.net/) for the latest release (if version not provided)
+- Downloads the `.tar.bz2` or `.tar.xz` archive (whichever is available)
 - Extracts it to `/opt/thunderbird`
-- Prevents redundant installs by tagging successful installs
+- Skips reinstallation if a tag file for the version exists
+- Saves downloads to `/opt/downloads/` for reuse
+- Supports command-line arguments in any order
 
 ---
 
 ## 🛠 Installation
 
-1. Copy `update-thunderbird.sh` anywhere you like, eg to any directory in your `$PATH` (e.g., `/usr/local/bin/`)
+1. Copy `update-thunderbird.sh` anywhere in your `$PATH`, like `/usr/local/bin/`
 2. Make it executable:
 
 ```bash
 chmod +x /path/to/update-thunderbird.sh
 ```
 
+3. (Optional) Symlink or rename it to something like `thunderup`
+
 ---
 
 ## 🔧 Usage
 
 ```bash
-./update-thunderbird.sh [version]
+update-thunderbird.sh [options] [version]
 ```
+
+### Options
+
+- `--help`, `-h` — Print usage help and exit
+- `--check-only` — Show the latest version available, then exit
+
+### Version Argument
+
+- Optional. If provided (e.g., `115.2.0`), attempts to install that specific version.
+- If omitted, the script checks the latest version from the website.
 
 ---
 
-## 🔍 Example
+## 🔍 Examples
 
 ```bash
-./update-thunderbird.sh # download & install the latest version if we're out of date
-# or
-./update-thunderbird.sh 115.2.0 # download & install a specific version if that's not the one we're running
+update-thunderbird.sh           # Auto-detects latest version and installs if needed
+update-thunderbird.sh 115.2.0  # Installs specific version if not already installed
+update-thunderbird.sh --check-only  # Outputs latest version number and exits
+```
+
+Arguments can appear in any order:
+
+```bash
+update-thunderbird.sh --check-only 115.2.0
+update-thunderbird.sh 115.2.0 --check-only
 ```
 
 ---
@@ -48,26 +69,28 @@ chmod +x /path/to/update-thunderbird.sh
 
 - `wget`
 - `tar`
-- Standard GNU userland (`bash`, `realpath`, `mkdir`, `tee`)
+- Standard GNU tools (`bash`, `realpath`, `mkdir`, `tee`)
 
-These are already included on most modern Linux distros.
+These are typically available by default on most Linux distributions.
 
 ---
 
 ## 🚧 Notes
 
-- If the script detects the same version was already installed, it aborts with a helpful message.
-- To force reinstallation, just delete the corresponding tag file in the downloads directory.
+- The script avoids reinstalling by creating a tag file like:\
+  `/opt/downloads/thunderbird_installed.115.2.0`
+- To force reinstalling the same version, delete the tag file.
+- Logs for each run are saved to `/tmp/update_thunderbird.log`
 
 ---
 
 ## 📜 License
 
-See [LICENSE](./LICENSE)
+See LICENSE
 
 ---
 
 ## ✨ Why?
 
-Because Mozilla doesn’t ship `.deb` files, and package managers are either outdated or annoying. I've been using and maintaining this script on a daily basis for years, so it should be fairly robust by now.
+Because Mozilla doesn’t provide `.deb` packages, and distro repositories are often outdated. This gives you up-to-date Thunderbird on your terms, no flatpaks, snaps, or PPAs needed.
 
