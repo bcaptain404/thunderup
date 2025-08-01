@@ -1,9 +1,16 @@
 #!/bin/bash
-
 set -e
+# todo: --launch # to launch afterward
+# todo: --prefix=
+# todo: --quiet
 
 function Usage() {
-    echo "## Usage: $0 [version] # you may omit [version] to force an automatic check." >&2
+    echo "## Usage: $0 [version]"
+    echo "   You may omit [version] to auto-check from the website."
+    echo ""
+    echo "   Options:"
+    echo "     --help, -h         Show this help and exit"
+    echo "     --check-only       Only display the latest version available"
 }
 
 function DownloadFile() {
@@ -21,7 +28,7 @@ function DownloadFile() {
     }
     
     if [ -e "$TMP" ] ; then
-        echo "## NOTE: Removing previous failed fownload: $TMP" >&2
+        echo "## NOTE: Removing previous failed download: $TMP" >&2
         rm "$TMP"
     fi
 
@@ -92,7 +99,7 @@ function GetVer() {
         echo "$LATEST_VER"
     }
 
-    echo "## Will check latest verison at $PAGE_URL" >&2
+    echo "## Will check latest version at $PAGE_URL" >&2
     echo "## Checking..." >&2
     NEW_VER="$(GetLatestVer "$PAGE_URL")" || return $?
 
@@ -143,15 +150,35 @@ function UpdateProg() {
     echo "## Updating tag file..." >&2
     touch "$TAG_FILE"
     echo "## Done" >&2
-    exit 0
 }
 
 function go() {
     local NAME="thunderbird"
     local PROG_DIR="/opt/${NAME}"
-    local PAGE_URL='https://www.${NAME}.net/en-US/'
+    local PAGE_URL="https://www.${NAME}.net/en-US/"
     local FILE_URL="https://download-installer.cdn.mozilla.net/pub/${NAME}/releases/\${VER}/linux-x86_64/en-US/\${FILE}"
-    
+
+    for arg in "$@"; do
+        case "$arg" in
+            --help|-h)
+                Usage
+                exit 0
+                ;;
+            --check-only)
+                GetVer "https://www.${NAME}.net/en-US/" "" || exit $?
+                exit 0
+                ;;
+        esac
+    done
+
+    # Now filter out non-version args
+    for arg in "$@"; do
+        if [[ "$arg" != --* ]]; then
+            VERSION="$arg"
+            break
+        fi
+    done
+
     local ALL_EXT=("tar.bz2" "tar.xz")
     local EXT
 
